@@ -1,7 +1,4 @@
 # dungeonGameBarotYash
-Sure! Here's a simple README for your Dungeon Crawler game:
-
----
 
 # Dungeon Crawler Game
 
@@ -72,6 +69,3 @@ Move (WASD or Q to quit):
 ## License
 This project is open-source and available under the MIT License.
 
----
-
-Feel free to customize it further or add any additional details!
