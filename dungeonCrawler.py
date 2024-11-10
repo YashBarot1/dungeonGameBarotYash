@@ -105,7 +105,7 @@ class DungeonCrawler:
 
     def start_game(self):
         self.display_rules()  # Display the rules
-        self.place_mines(10)  # Place 10 mines
+        self.place_mines(15)  # Place 15 mines
         self.display_map()  # Show the initial map
 
         while True:
