@@ -1,16 +1,13 @@
 import random
-class Enemy:
-    def __init__(self, position, health, attack_power):
-        self.position = position
-        self.health = health
-        self.attack_power = attack_power
+import sys
 
-    def take_damage(self, amount):
-        self.health -= amount
-
-    def is_alive(self):
-        return self.health > 0
-import random
+# Check if on Windows or Unix-based system
+try:
+    import msvcrt  # Windows-specific
+    WINDOWS = True
+except ImportError:
+    import curses  # Unix-based
+    WINDOWS = False
 
 class DungeonCrawler:
     def __init__(self, width, height):
@@ -22,7 +19,7 @@ class DungeonCrawler:
         self.mines = []  # Mines will be placed randomly
 
     def place_mines(self, num_mines):
-        placed_mines = 10
+        placed_mines = 0
         while placed_mines < num_mines:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)
@@ -40,11 +37,9 @@ class DungeonCrawler:
         Rules:
         - Use 'W', 'A', 'S', 'D' to move your character around the dungeon.
         - Avoid stepping on mines (M) or you will die instantly!
-        - If you "see" a mine, you lose the game!
+        - If you "see" a mine, you lose the game! (unfair but so is life)
         - Reach the exit (E) to win the game.
-        - Your health is indicated at the top of the screen. (it's not)
-        - Good luck and have fun! (lol imagine u win)
-        -Oh by the way, get to "E" to win, in case it wasn't obvious
+        - Good luck and have fun! (lol imagine you actually win)
         """)
 
     def display_map(self):
@@ -67,7 +62,7 @@ class DungeonCrawler:
             mx, my = mine
             if abs(mx - player_x) <= 1 and abs(my - player_y) <= 1:
                 print(f"Warning! You see a mine at position ({mx}, {my})! Game Over.")
-                exit()  # End the game if a mine is visible
+                sys.exit()  # End the game if a mine is visible
         
         # Display the mines (even if they are hidden)
         for mine in self.mines:
@@ -99,17 +94,34 @@ class DungeonCrawler:
         # Check if the player reached the exit
         if self.player_pos == self.exit_pos:
             print("Congratulations! You have escaped the dungeon!")
-            exit()  # End the game if the player wins
+            sys.exit()  # End the game if the player wins
 
         self.display_map()  # Refresh the map after moving
+
+    def get_key(self):
+        if WINDOWS:
+            return msvcrt.getch().decode('utf-8').upper()
+        else:
+            # Use curses to get real-time input on Unix-based systems
+            return self.screen.getkey().upper()
 
     def start_game(self):
         self.display_rules()  # Display the rules
         self.place_mines(15)  # Place 15 mines
         self.display_map()  # Show the initial map
 
+        if not WINDOWS:
+            curses.wrapper(self.game_loop)  # Use curses for Unix-based systems
+        else:
+            self.game_loop()
+
+    def game_loop(self, screen=None):
+        if not WINDOWS:
+            self.screen = screen  # Initialize screen for Unix-based systems
+            self.screen.nodelay(True)  # Non-blocking input
+
         while True:
-            move = input("Move (WASD or Q to quit): ").upper()
+            move = self.get_key()
             if move == 'Q':
                 print("Thanks for playing!")
                 break
@@ -117,17 +129,5 @@ class DungeonCrawler:
                 self.move_player(move)
             else:
                 print("Invalid input! Use W, A, S, D, or Q to quit.")
-
-
-
-
-
-class Mine:
-    def __init__(self, position):
-        self.position = position
-
-
-
-# Start the game with a 10x10 dungeon
-game = DungeonCrawler(10, 10)
+game = DungeonCrawler(10,10)
 game.start_game()
