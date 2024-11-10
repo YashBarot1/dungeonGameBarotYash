@@ -33,7 +33,7 @@ class DungeonCrawler:
     def display_rules(self):
         print("""
         Welcome to the Dungeon Crawler Game!
-
+        The entire field is full of fog, you have limited vision. 
         Rules:
         - Use 'W', 'A', 'S', 'D' to move your character around the dungeon.
         - Avoid stepping on mines (M) or you will die instantly!
